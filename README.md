@@ -24,3 +24,5 @@ Location in Github Repository:
 Coding Boot Camp. (n.d.). Professional Readme Guide. GitHub. https://coding-boot-camp.github.io/full-stack/github/professional-readme-guide
 
 Bootstrap. (2023). Getting started with Bootstrap. Bootstrap. https://getbootstrap.com/docs/5.3/getting-started/introduction/
+
+Bootstrap. (2023). Navbar https://getbootstrap.com/docs/5.3/components/navbar/

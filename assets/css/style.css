@@ -1,0 +1,17 @@
+html {
+    background-color: green;
+}
+.row {
+    border: 2px red dashed;
+}
+
+main {
+    height: 100vh;
+    background-color: aquamarine;
+}
+
+#current-city {
+    height: 150px;
+    background-color: grey;
+    padding: 20px;
+}

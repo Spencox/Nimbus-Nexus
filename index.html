@@ -9,7 +9,95 @@
     <link rel="stylesheet" href="./assets/css/style.css" />
   </head>
   <body>
-    <h1>Hello, world!</h1>
+    <header>
+        <!-- Modified Bootstrap Navbar -->
+        <nav class="navbar bg-body-tertiary">
+            <div class="container-fluid justify-content-around">
+                <h2 class="navbar-brand">Nimbus Nexus</h2>
+                <form class="d-flex my-2" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Quick Pick Choose City
+                    </button>
+                    <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Austin</a></li>
+                    <li><a class="dropdown-item" href="#">Houston</a></li>
+                    <li><a class="dropdown-item" href="#">New York</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <div id="current-city" class="container-fluid">
+            DISPLAY CURRENT CITY 
+        </div>
+        <div class="row row-cols-1 row-cols-md-5 g-5 m-3 p-3 h-60">
+            <div class="col">
+                <div class="card h-100">
+                <img src="./assets/images/sky.webp" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                </div>
+                <div class="card-footer">
+                    <small class="text-body-secondary">Last updated 3 mins ago</small>
+                </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                <img src="./assets/images/sky.webp" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
+                </div>
+                <div class="card-footer">
+                    <small class="text-body-secondary">Last updated 3 mins ago</small>
+                </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                <img src="./assets/images/sky.webp" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
+                </div>
+                <div class="card-footer">
+                    <small class="text-body-secondary">Last updated 3 mins ago</small>
+                </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                    <img src="./assets/images/sky.webp" class="card-img-top" alt="...">
+                    <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
+                    </div>
+                    <div class="card-footer">
+                    <small class="text-body-secondary">Last updated 3 mins ago</small>
+                    </div>
+                </div>
+                </div>
+                <div class="col">
+                <div class="card h-100">
+                    <img src="./assets/images/sky.webp" class="card-img-top" alt="...">
+                    <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
+                    </div>
+                    <div class="card-footer">
+                    <small class="text-body-secondary">Last updated 3 mins ago</small>
+                    </div>
+                </div>
+                </div>
+        </div>
+    </main>
     <!-- Bootstrap javascript for popper -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <!-- Bootstrap javascript general functionality -->
