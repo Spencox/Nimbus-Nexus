@@ -36,3 +36,11 @@ CITE - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_
 CITE - https://www.youtube.com/watch?v=A0AOCBnN8RA 
 
 CITE - https://www.youtube.com/watch?v=NNCVLuqsoMY&list=PLohrXihya73qyrvb93kut-596a6WhzXZ9&index=1 
+
+CITE - https://www.youtube.com/watch?v=7oJgdyMS4rQ
+
+CITE - https://www.youtube.com/watch?v=DHvZLI7Db8E
+
+CITE - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+
+CITE - https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API

@@ -14,12 +14,12 @@
         <nav class="navbar bg-body-tertiary">
             <div class="container-fluid justify-content-around">
                 <h2 class="navbar-brand">Nimbus Nexus</h2>
-                <form class="d-flex my-2" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <form id="search-city" class="d-flex my-2" role="search">
+                    <input id="search-input" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button id="serach-button" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Quick Pick Choose City
                     </button>
                     <ul class="dropdown-menu">
@@ -32,8 +32,8 @@
         </nav>
     </header>
     <main>
-        <div id="current-city" class="container-fluid">
-            DISPLAY CURRENT CITY 
+        <div id="current-weather" class="container-fluid">
+            <h2 id="current-city"></h2>
         </div>
         <div class="row row-cols-1 row-cols-md-5 g-5 m-3 p-3 h-60">
             <div class="col">
@@ -101,7 +101,13 @@
     <!-- Bootstrap javascript for popper -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <!-- Bootstrap javascript general functionality -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>   
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <!-- days.js scripts -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/dayjs@1.11.3/dayjs.min.js"
+      integrity="sha256-iu/zLUB+QgISXBLCW/mcDi/rnf4m4uEDO0wauy76x7U="
+      crossorigin="anonymous"
+    ></script>   
     <script src="./assets/js/script.js"></script>
   </body>
 </html>

@@ -7,10 +7,10 @@ html {
 
 main {
     height: 100vh;
-    background-color: aquamarine;
+    background-color: darkslategrey;
 }
 
-#current-city {
+#current-weather {
     height: 150px;
     background-color: grey;
     padding: 20px;
