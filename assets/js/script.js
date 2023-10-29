@@ -2,32 +2,72 @@
 const APIKey = "553d60d891527f3f60c3b1e4bb0f053b"
 
 // DOM selectors
-const searchFormEl = document.getElementById('search-city');
-const searchInputEl = document.getElementById('search-input');
-const currentCityEl = document.getElementById('city')
+const searchFormEl = $('#search-city');
+const searchInputEl = $('#search-input');
+// current weather DOM selectors
+const currentWeatherChildren = $('#current-weather [id]');
+const backgroundMainEl = $('body');
 
-  // helper function to get current time
-  function getTime() {
-    var currentDay = dayjs().format('MM/DD/YYYY');
-    return currentDay
-  }
 
-  // kelvin to fahrenheit 
-  function cToF(degK) {
-    return Math.round((degK-273.15) * (9/5) + 32);
-  }
+// array of elements
+const currentWeatherElArr = []
+
+// helper function to get current time
+function getTime() {
+var currentDay = dayjs().format('MM/DD/YYYY');
+return currentDay
+}
+
+// kelvin to fahrenheit 
+function cToF(degK) {
+return Math.round((degK-273.15) * (9/5) + 32);
+}
+
+// icon url builder
+function buildIconUrl(iconRef) {
+return `https://openweathermap.org/img/wn/${iconRef}@2x.png`
+}
+
+// change background night and day
+function nightOrDayBackground() {
+    let currentTime = dayjs().format('HH');
+    let dayOrNight = (currentTime >= 6 && currentTime <= 18) ? "day" : "night"
+    console.log('Current Time: ' + currentTime);
+    console.log("Day or night: " + dayOrNight);
+    if(dayOrNight === "day") {
+        backgroundMainEl.css('background-image', 'url(./assets/images/day.jpg)')
+        $('#current-weather').css('background-color' , 'white')
+        $('p').css({
+            'color': 'black',
+            'font-size': '20px',
+            'font-weight' : '600px'
+        });
+    } else {
+        // clear css function
+        backgroundMainEl.css('background-image', 'url(./assets/images/night.jpg)')
+        $('p').css({
+            'color': 'white',
+            'font-size': '20px'
+        });
+        $('h2').css('color', 'white');
+    }
+};
+
+// load day or night background image
+window.onload = nightOrDayBackground;
 
 // search bar input 
 var searchBarInput = function (event) {
     event.preventDefault();  
-    const cityName = searchInputEl.value.trim();
+    const cityName = searchInputEl.val().trim();
     if (cityName) {
         getLatLong(cityName)
             .then(function (geoData) {
-                const currentWeather = getCurrentWeather(geoData.geoLat, geoData.geoLon);
-                console.log(currentWeather);
-                //displayCurrentWeather(currentWeather);
-                //localStorage.setItem("Current Weather" , JSON.stringify(geoData));
+                getCurrentWeather(geoData.geoLat, geoData.geoLon)
+                    .then(function(currentWeatherData){
+                        displayWeather(currentWeatherData, currentWeatherChildren);
+                        //localStorage.setItem("Current Weather" , JSON.stringify(geoData));
+                    });
             })
             .catch(function (error) {
                 console.log("Error fetching geolocation data:", error);
@@ -38,9 +78,28 @@ var searchBarInput = function (event) {
   };
 
   // display current weather
-function displayCurrentWeather(currentWeather) {
-    console.log(currentWeather);
-    currentCityEl.textContent(currentWeather.name)
+function displayWeather(currentWeather, elements) {
+    elements.each(function(index) {
+        const weatherEl = $(this);
+        const weatherKeys = Object.keys(currentWeather);
+        const weatherKey = weatherKeys[index];
+        const weatherVal = currentWeather[weatherKey];
+        if(weatherKey === "name" || weatherKey === "date") {
+            weatherEl.text(weatherVal);
+        } else if (weatherKey === "icon") {
+            // clear previous img
+            weatherEl.empty();
+            //put in new image
+            const iconImage = $('<img>', {
+                src: weatherVal,
+                alt: 'weather status icon',
+                class: 'img-fluid'
+            });
+            weatherEl.append(iconImage);
+        } else {
+            weatherEl.text(weatherKeys[index] + ": " + weatherVal);
+        }
+    });
 }
 
 // get city lat longs
@@ -65,7 +124,6 @@ function getLatLong(city) {
         })
 }
 
-
 // get current weather after city lat longs
 function getCurrentWeather(lat, lon) {
     const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${APIKey}`;
@@ -76,20 +134,21 @@ function getCurrentWeather(lat, lon) {
             return response.json();
         })
         .then(function(data) {
+            console.log(data);
             const currentWeatherData = {
-                name: data.name,
                 date: getTime(),
-                icon: data.weather[0].icon, 
-                temp: cToF(data.main.temp),
-                wind: data.wind.speed,
-                humidity: data.main.humidity
+                name: data.name,
+                icon: buildIconUrl(data.weather[0].icon), 
+                "Temp(F)": cToF(data.main.temp),
+                "Wind Speed": data.wind.speed,
+                Humidity: data.main.humidity
             }
             return currentWeatherData;
         })
 }
 
 // search event Listeners
-searchFormEl.addEventListener('submit', searchBarInput);
+searchFormEl.on('submit', searchBarInput);
 
 // construct API parameters for 5 day weather call
 // const storedGeoData = JSON.parse(localStorage.getItem("Current Weather"));
