@@ -1,17 +1,13 @@
-html {
-    background-color: green;
-}
-.row {
-    border: 2px red dashed;
-}
-
-main {
+.body {
     height: 100vh;
-    background-color: aquamarine;
+    object-fit: fill;
+}
+.hidden {
+    display: none;
 }
 
-#current-city {
-    height: 150px;
-    background-color: grey;
-    padding: 20px;
+#current-icon {
+    height: 75px;
+    width: 75px;
 }
+

@@ -26,3 +26,25 @@ Coding Boot Camp. (n.d.). Professional Readme Guide. GitHub. https://coding-boot
 Bootstrap. (2023). Getting started with Bootstrap. Bootstrap. https://getbootstrap.com/docs/5.3/getting-started/introduction/
 
 Bootstrap. (2023). Navbar https://getbootstrap.com/docs/5.3/components/navbar/
+
+CITE - https://openweathermap.org/api/geocoding-api
+
+CITE - https://openweathermap.org/forecast5
+
+CITE - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split 
+
+CITE - https://www.youtube.com/watch?v=A0AOCBnN8RA 
+
+CITE - https://www.youtube.com/watch?v=NNCVLuqsoMY&list=PLohrXihya73qyrvb93kut-596a6WhzXZ9&index=1 
+
+CITE - https://www.youtube.com/watch?v=7oJgdyMS4rQ
+
+CITE - https://www.youtube.com/watch?v=DHvZLI7Db8E
+
+CITE - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+
+CITE - https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+
+CITE - https://wallpaperswide.com/sky_clouds-wallpapers.html
+
+CITE - https://wallpaperswide.com/night_sky_3-wallpapers.html 
