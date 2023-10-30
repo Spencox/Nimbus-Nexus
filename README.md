@@ -45,6 +45,6 @@ CITE - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_
 
 CITE - https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
 
-CITE - https://wallpaperswide.com/sky_clouds-wallpapers.html
+CITE - https://wallpaperswide.com/clear_blue_sky_panorama-wallpapers.html#google_vignette
 
 CITE - https://wallpaperswide.com/night_sky_3-wallpapers.html 

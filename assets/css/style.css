@@ -11,3 +11,11 @@
     width: 75px;
 }
 
+#day-icons {
+    height: 500px;
+    width: 500px;
+}
+
+.card-body {
+    height: 250px;
+}

@@ -6,11 +6,14 @@ const searchFormEl = $('#search-city');
 const searchInputEl = $('#search-input');
 // current weather DOM selectors
 const currentWeatherChildren = $('#current-weather [id]');
-const backgroundMainEl = $('body');
+const backgroundBodyEl = $('body');
 
+// load day or night background image
+window.onload = nightOrDayBackground;
 
 // array of elements
-const currentWeatherElArr = []
+const currentWeatherElArr = [];
+const searchHistoryArr = [];
 
 // helper function to get current time
 function getTime() {
@@ -20,23 +23,33 @@ return currentDay
 
 // kelvin to fahrenheit 
 function cToF(degK) {
-return Math.round((degK-273.15) * (9/5) + 32);
-}
+    return Math.round((degK-273.15) * (9/5) + 32);
+}   
 
 // icon url builder
 function buildIconUrl(iconRef) {
-return `https://openweathermap.org/img/wn/${iconRef}@2x.png`
+    return `https://openweathermap.org/img/wn/${iconRef}@2x.png`
+}
+
+// set weather search parameters
+function setStoredWeather (currentCitySearch) {
+    console.log(currentCitySearch);
+    if(searchHistoryArr) {
+        searchHistoryArr.forEach(function(citySearched) {
+            const listItem = $("<li>").text(citySearched.name);
+            $("#search-list").append(listItem);
+        });
+    }    
+    searchHistoryArr.push(currentCitySearch);
+    localStorage.setItem("Weather Searches" , JSON.stringify(searchHistoryArr));
 }
 
 // change background night and day
 function nightOrDayBackground() {
     let currentTime = dayjs().format('HH');
-    let dayOrNight = (currentTime >= 6 && currentTime <= 18) ? "day" : "night"
-    console.log('Current Time: ' + currentTime);
-    console.log("Day or night: " + dayOrNight);
+    let dayOrNight = (currentTime >= 6 && currentTime <= 18) ? "day" : "night";
     if(dayOrNight === "day") {
-        backgroundMainEl.css('background-image', 'url(./assets/images/day.jpg)')
-        $('#current-weather').css('background-color' , 'white')
+        backgroundBodyEl.css('background-image', 'url(./assets/images/day.jpg)')
         $('p').css({
             'color': 'black',
             'font-size': '20px',
@@ -44,17 +57,15 @@ function nightOrDayBackground() {
         });
     } else {
         // clear css function
-        backgroundMainEl.css('background-image', 'url(./assets/images/night.jpg)')
-        $('p').css({
-            'color': 'white',
-            'font-size': '20px'
-        });
+        backgroundBodyEl.css('background-image', 'url(./assets/images/night.jpg)')
+        $('#current-weather p').css('color' , 'white')
         $('h2').css('color', 'white');
+        $('.card').css({
+            'background-color': 'Midnightblue',
+            'color': 'white'
+        });
     }
 };
-
-// load day or night background image
-window.onload = nightOrDayBackground;
 
 // search bar input 
 var searchBarInput = function (event) {
@@ -63,10 +74,11 @@ var searchBarInput = function (event) {
     if (cityName) {
         getLatLong(cityName)
             .then(function (geoData) {
+                setStoredWeather(geoData);
+                get5DayForecast();
                 getCurrentWeather(geoData.geoLat, geoData.geoLon)
                     .then(function(currentWeatherData){
                         displayWeather(currentWeatherData, currentWeatherChildren);
-                        //localStorage.setItem("Current Weather" , JSON.stringify(geoData));
                     });
             })
             .catch(function (error) {
@@ -77,7 +89,7 @@ var searchBarInput = function (event) {
     }
   };
 
-  // display current weather
+// display current weather
 function displayWeather(currentWeather, elements) {
     elements.each(function(index) {
         const weatherEl = $(this);
@@ -127,14 +139,12 @@ function getLatLong(city) {
 // get current weather after city lat longs
 function getCurrentWeather(lat, lon) {
     const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${APIKey}`;
-    
     // return a promise
     return fetch(currentWeatherUrl)
         .then(function(response) {
             return response.json();
         })
         .then(function(data) {
-            console.log(data);
             const currentWeatherData = {
                 date: getTime(),
                 name: data.name,
@@ -147,61 +157,81 @@ function getCurrentWeather(lat, lon) {
         })
 }
 
+
+// helper function to set up 5 day forecasts
+function dailyAverage(fiveDayForecasts) {
+    const dailyWeatherArr = [];
+    for(const date in fiveDayForecasts) {        
+        const dailyWeatherAvg = { };
+        const temp = fiveDayForecasts[date]["Temp(F)"]
+        const wind = fiveDayForecasts[date]["Wind Speed"]
+        const humid = fiveDayForecasts[date].Humidity
+        // average temp, wind, humidity arrays and assign to return object
+        dailyWeatherAvg.date = fiveDayForecasts[date].date;
+        // set icon to daily value if exists
+        const iconIndex = fiveDayForecasts[date].icon.length > 5 ? 5 : Math.floor((fiveDayForecasts[date].icon.length / 2) - 1);
+        dailyWeatherAvg.icon = fiveDayForecasts[date].icon[iconIndex];
+        dailyWeatherAvg["Temp(F)"] = Math.round(temp.reduce((acc, temp) => acc + temp, 0) / temp.length);
+        dailyWeatherAvg["Wind Speed"] = Math.round(wind.reduce((acc, wind) => acc + wind, 0) / wind.length);
+        dailyWeatherAvg.Humidity = Math.round(humid.reduce((acc, humid) => acc + humid, 0) / humid.length);
+        // push averaged new weather object 
+        dailyWeatherArr.push(dailyWeatherAvg)
+    }
+    return dailyWeatherArr
+}
+
+// 5 day forecast
+function get5DayForecast() {
+    $('#five-day').removeClass('hidden')
+    const storedGeoData = JSON.parse(localStorage.getItem("Weather Searches"));
+    const lat = storedGeoData[storedGeoData.length - 1].geoLat;
+    const lon = storedGeoData[storedGeoData.length - 1].geoLon;
+    
+    const forecast5dayURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${APIKey}`
+    
+    fetch(forecast5dayURL)
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            const forecasts = data.list;
+            const dailyAverages = {};
+            forecasts.forEach(forecast => {
+                const date = forecast.dt_txt.split(' ')[0]; // Extract date
+                // get icon for 12 noon for display purposes
+                const hour = dayjs(forecast.dt_txt).format("HH");
+                const temperature = cToF(forecast.main.temp); // Daily temperature in Celsius
+                const wind = forecast.wind.speed; // wind speed
+                const humidity = forecast.main.humidity; // humidity
+                // cycle check if date not matching if so create new array if match store value
+                if(!dailyAverages[date]) {
+                    dailyAverages[date] = {
+                        date: date,
+                        icon: [],
+                        "Temp(F)": [],
+                        "Wind Speed": [],
+                        Humidity: []
+                    }
+                };
+                // fill up object arrays
+
+                const iconImgUrl = buildIconUrl(forecast.weather[0].icon)
+                dailyAverages[date].icon.push(iconImgUrl);
+                dailyAverages[date]["Temp(F)"].push(temperature);
+                dailyAverages[date]["Wind Speed"].push(wind);
+                dailyAverages[date].Humidity.push(humidity);
+            });
+            const averages = dailyAverage(dailyAverages) 
+            display5DayForecast(averages);
+        })
+}
+
+function display5DayForecast(fiveDayForecasts) {
+    fiveDayForecasts.forEach((forecastCard, index) => {
+        const cardId = "#day-" + index + " [id]";
+        displayWeather(forecastCard, $(cardId));
+    });
+}
+
 // search event Listeners
 searchFormEl.on('submit', searchBarInput);
-
-// construct API parameters for 5 day weather call
-// const storedGeoData = JSON.parse(localStorage.getItem("Current Weather"));
-// const lat = 29.7589; //storedGeoData.geoLat;
-// const lon = -95.3677; //storedGeoData.geoLon;
-
-// const forecast5dayURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${APIKey}`
-
-//console.log(forecast5dayURL);
-
-// helper function to calculate averages
-// function dailyAverage(obj) {
-//     const dailyWeatherAvg = { }
-//     for(let day in obj) {
-//         const temp = obj[day].temperature
-//         const wind = obj[day].wind
-//         const humid = obj[day].humidity
-//         // average temp, wind, humidity arrays and assign to return object
-//         dailyWeatherAvg.tempAvg = temp.reduce((acc, temp) => acc + temp, 0) / temp.length;
-//         dailyWeatherAvg.windAvg = wind.reduce((acc, wind) => acc + wind, 0) / wind.length;
-//         dailyWeatherAvg.humidAvg = humid.reduce((acc, humid) => acc + humid, 0) / humid.length;
-//    }
-//    // TODO: Format units before returning object
-//    return dailyWeatherAvg
-// }
-
-// fetch(forecast5dayURL)
-//     .then(function(response) {
-//         return response.json();
-//     })
-//     .then(function(data) {
-//         const forecasts = data.list;
-//         const dailyAverages = {};
-//         //console.log(data);
-//         forecasts.forEach(forecasts => {
-//             const date = forecasts.dt_txt.split(' ')[0]; // Extract date
-//             const temperature = forecasts.main.temp; // Daily temperature in Celsius
-//             const wind = forecasts.wind.speed; // wind speed
-//             const humidity = forecasts.main.humidity; // humidity
-//             // cycle check if date not matching if so create new array if match store value
-//             if(!dailyAverages[date]) {
-//                 dailyAverages[date] = {
-//                     temperature: [],
-//                     wind: [],
-//                     humidity: []
-//                 }
-//             };
-//             // fill up object arrays
-//             dailyAverages[date].temperature.push(temperature);
-//             dailyAverages[date].wind.push(wind);
-//             dailyAverages[date].humidity.push(humidity);
-//         });
-//         const averages = dailyAverage(dailyAverages);
-//         console.log(averages);
-//     })
-
