@@ -19,3 +19,7 @@
 .card-body {
     height: 250px;
 }
+
+.dropdown-item:hover {
+    background-color: rgb(139, 195, 139); 
+  }

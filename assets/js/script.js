@@ -31,17 +31,37 @@ function buildIconUrl(iconRef) {
     return `https://openweathermap.org/img/wn/${iconRef}@2x.png`
 }
 
-// set weather search parameters
-function setStoredWeather (currentCitySearch) {
-    console.log(currentCitySearch);
+// function search history management
+function updateSearchHistory() {
+    console.log(searchHistoryArr.length);
+    $("#search-list").empty();
     if(searchHistoryArr) {
         searchHistoryArr.forEach(function(citySearched) {
-            const listItem = $("<li>").text(citySearched.name);
+            console.log(citySearched);
+            const listItem = $("<li>");
+            const button = $("<button>");
+            button.text(citySearched.name)
+            .addClass("dropdown-item")
+            .attr("type", "button");
+            listItem.append(button)
             $("#search-list").append(listItem);
         });
     }    
-    searchHistoryArr.push(currentCitySearch);
-    localStorage.setItem("Weather Searches" , JSON.stringify(searchHistoryArr));
+}
+
+// set weather search parameters
+function setStoredWeather (currentCitySearch) {
+    console.log(currentCitySearch);
+    if(searchHistoryArr.length < 7) {
+        searchHistoryArr.push(currentCitySearch);
+        localStorage.setItem("Weather Searches" , JSON.stringify(searchHistoryArr));
+    } else {
+        console.log("Pop case");
+        searchHistoryArr.pop();
+        searchHistoryArr.shift(currentCitySearch); 
+        localStorage.setItem("Weather Searches" , JSON.stringify(searchHistoryArr));
+    }
+    updateSearchHistory();
 }
 
 // change background night and day
@@ -67,10 +87,8 @@ function nightOrDayBackground() {
     }
 };
 
-// search bar input 
-var searchBarInput = function (event) {
-    event.preventDefault();  
-    const cityName = searchInputEl.val().trim();
+// function search
+function search(cityName) {
     if (cityName) {
         getLatLong(cityName)
             .then(function (geoData) {
@@ -87,6 +105,13 @@ var searchBarInput = function (event) {
     } else {
         console.log("Could not find city")
     }
+}
+
+// search bar input 
+var searchBarInput = function (event) {
+    event.preventDefault();  
+    const cityName = searchInputEl.val().trim();
+    search(cityName);
   };
 
 // display current weather
@@ -206,7 +231,7 @@ function get5DayForecast() {
                 // cycle check if date not matching if so create new array if match store value
                 if(!dailyAverages[date]) {
                     dailyAverages[date] = {
-                        date: date,
+                        date: dayjs(date).format('MM/DD/YYYY'),
                         icon: [],
                         "Temp(F)": [],
                         "Wind Speed": [],
@@ -235,3 +260,8 @@ function display5DayForecast(fiveDayForecasts) {
 
 // search event Listeners
 searchFormEl.on('submit', searchBarInput);
+
+// search from previous 
+$(".dropdown").on('click', '.dropdown-item', function() {
+    search($(this).text());
+  });
