@@ -20,13 +20,9 @@
                 </form>
                 <div class="dropdown">
                     <button id="search-button" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Quick Pick Choose City
+                    Previous Search 
                     </button>
-                    <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Austin</a></li>
-                    <li><a class="dropdown-item" href="#">Houston</a></li>
-                    <li><a class="dropdown-item" href="#">New York</a></li>
-                    </ul>
+                    <ul id="search-list" class="dropdown-menu"></ul>
                 </div>
             </div>
         </nav>
@@ -56,68 +52,75 @@
                 </div>
             </div>
         </div>
-        <div class="row row-cols-1 row-cols-md-5 g-5 m-2 h-60">
-            <div class="col">
-                <div class="card h-100">
-                <img src="./assets/images/sky.webp" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                </div>
-                <div class="card-footer">
-                    <small class="text-body-secondary">Last updated 3 mins ago</small>
-                </div>
+        <!-- card section for 5 day forecast -->
+        <div id="five-day" class="row row-cols-1 row-cols-md-5 g-3 m-2 p-3 hidden">
+            <div class="col my-2">
+                <div id="day-1" class="card" style="height: 40vh;">
+                    <div class="card-body text-center d-flex flex-column justify-content-center align-items-center" style="height: 100%;">
+                        <p id="day-icon-1" class="mb-0">ICON</p>
+                        <h5 id="day-date-1" class="card-title">Date</h5>
+                        <div class="d-flex flex-column justify-content-between align-items-center" style="flex: 1;">
+                            <p id="day-temp-1" class="card-text">Temp</p>
+                            <p id="day-wind-1" class="card-text">Wind</p>
+                            <p id="day-humid-1" class="card-text">Humidity</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col">
-                <div class="card h-100">
-                <img src="./assets/images/sky.webp" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
-                </div>
-                <div class="card-footer">
-                    <small class="text-body-secondary">Last updated 3 mins ago</small>
-                </div>
+            <div class="col my-2">
+                <div id="day-2" class="card" style="height: 40vh;">
+                    <div class="card-body text-center d-flex flex-column justify-content-center align-items-center" style="height: 100%;">
+                        <p id="day-icon-2" class="mb-0">ICON</p>
+                        <h5 id="day-date-2" class="card-title">Date</h5>
+                        <div class="d-flex flex-column justify-content-between align-items-center" style="flex: 1;">
+                            <p id="day-temp-2" class="card-text">Temp</p>
+                            <p id="day-wind-2" class="card-text">Wind</p>
+                            <p id="day-humid-2" class="card-text">Humidity</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col">
-                <div class="card h-100">
-                <img src="./assets/images/sky.webp" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
-                </div>
-                <div class="card-footer">
-                    <small class="text-body-secondary">Last updated 3 mins ago</small>
-                </div>
+            <div class="col my-2">
+                <div id="day-3" class="card" style="height: 40vh;">
+                    <div class="card-body text-center d-flex flex-column justify-content-center align-items-center" style="height: 100%;">
+                        <p id="day-icon-3" class="mb-0">ICON</p>
+                        <h5 id="day-date-3" class="card-title">Date</h5>
+                        <div class="d-flex flex-column justify-content-between align-items-center" style="flex: 1;">
+                            <p id="day-temp-3" class="card-text">Temp</p>
+                            <p id="day-wind-3" class="card-text">Wind</p>
+                            <p id="day-humid-3" class="card-text">Humidity</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col">
-                <div class="card h-100">
-                    <img src="./assets/images/sky.webp" class="card-img-top" alt="...">
-                    <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
-                    </div>
-                    <div class="card-footer">
-                    <small class="text-body-secondary">Last updated 3 mins ago</small>
-                    </div>
-                </div>
-                </div>
-                <div class="col">
-                <div class="card h-100">
-                    <img src="./assets/images/sky.webp" class="card-img-top" alt="...">
-                    <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
-                    </div>
-                    <div class="card-footer">
-                    <small class="text-body-secondary">Last updated 3 mins ago</small>
+            <div class="col my-2">
+                <div id="day-4" class="card" style="height: 40vh;">
+                    <div class="card-body text-center d-flex flex-column justify-content-center align-items-center" style="height: 100%;">
+                        <p id="day-icon-4" class="mb-0">ICON</p>
+                        <h5 id="day-date-4" class="card-title">Date</h5>
+                        <div class="d-flex flex-column justify-content-between align-items-center" style="flex: 1;">
+                            <p id="day-temp-4" class="card-text">Temp</p>
+                            <p id="day-wind-4" class="card-text">Wind</p>
+                            <p id="day-humid-4" class="card-text">Humidity</p>
+                        </div>
                     </div>
                 </div>
+            </div>
+            <div class="col my-2">
+                <div id="day-5" class="card" style="height: 40vh;">
+                    <div class="card-body text-center d-flex flex-column justify-content-center align-items-center" style="height: 100%;">
+                        <p id="day-icon-5" class="mb-0">ICON</p>
+                        <h5 id="day-date-5" class="card-title">Date</h5>
+                        <div class="d-flex flex-column justify-content-between align-items-center" style="flex: 1;">
+                            <p id="day-temp-5" class="card-text">Temp</p>
+                            <p id="day-wind-5" class="card-text">Wind</p>
+                            <p id="day-humid-5" class="card-text">Humidity</p>
+                        </div>
+                    </div>
                 </div>
+            </div>
         </div>
+        
     </main>
     <!-- Bootstrap javascript for popper -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
