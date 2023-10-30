@@ -31,17 +31,16 @@ function buildIconUrl(iconRef) {
     return `https://openweathermap.org/img/wn/${iconRef}@2x.png`
 }
 
-function init() {
-    const storedSearches = JSON.parse(localStorage.getItem("Weather Searches"));
-    console.log(storedSearches.length);
-    storedSearches.forEach((search) => {
-        const listItem = $("<li>").text(search.name);
-        $("#search-list").append(listItem);
-    })
-}
-
+// set weather search parameters
 function setStoredWeather (currentCitySearch) {
-    searchHistoryArr.push(currentCitySearch)
+    console.log(currentCitySearch);
+    if(searchHistoryArr) {
+        searchHistoryArr.forEach(function(citySearched) {
+            const listItem = $("<li>").text(citySearched.name);
+            $("#search-list").append(listItem);
+        });
+    }    
+    searchHistoryArr.push(currentCitySearch);
     localStorage.setItem("Weather Searches" , JSON.stringify(searchHistoryArr));
 }
 
@@ -51,7 +50,6 @@ function nightOrDayBackground() {
     let dayOrNight = (currentTime >= 6 && currentTime <= 18) ? "day" : "night";
     if(dayOrNight === "day") {
         backgroundBodyEl.css('background-image', 'url(./assets/images/day.jpg)')
-        $('#current-weather').css('background-color' , 'white')
         $('p').css({
             'color': 'black',
             'font-size': '20px',
@@ -77,6 +75,7 @@ var searchBarInput = function (event) {
         getLatLong(cityName)
             .then(function (geoData) {
                 setStoredWeather(geoData);
+                get5DayForecast();
                 getCurrentWeather(geoData.geoLat, geoData.geoLon)
                     .then(function(currentWeatherData){
                         displayWeather(currentWeatherData, currentWeatherChildren);
@@ -85,7 +84,6 @@ var searchBarInput = function (event) {
             .catch(function (error) {
                 console.log("Error fetching geolocation data:", error);
             });
-        get5DayForecast(); 
     } else {
         console.log("Could not find city")
     }
@@ -141,7 +139,6 @@ function getLatLong(city) {
 // get current weather after city lat longs
 function getCurrentWeather(lat, lon) {
     const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${APIKey}`;
-    
     // return a promise
     return fetch(currentWeatherUrl)
         .then(function(response) {
@@ -171,8 +168,9 @@ function dailyAverage(fiveDayForecasts) {
         const humid = fiveDayForecasts[date].Humidity
         // average temp, wind, humidity arrays and assign to return object
         dailyWeatherAvg.date = fiveDayForecasts[date].date;
-        const iconIndex = Math.floor((fiveDayForecasts[date].icon.length / 2) - 1);
-        dailyWeatherAvg.icon = fiveDayForecasts[date].icon[0];
+        // set icon to daily value if exists
+        const iconIndex = fiveDayForecasts[date].icon.length > 5 ? 5 : Math.floor((fiveDayForecasts[date].icon.length / 2) - 1);
+        dailyWeatherAvg.icon = fiveDayForecasts[date].icon[iconIndex];
         dailyWeatherAvg["Temp(F)"] = Math.round(temp.reduce((acc, temp) => acc + temp, 0) / temp.length);
         dailyWeatherAvg["Wind Speed"] = Math.round(wind.reduce((acc, wind) => acc + wind, 0) / wind.length);
         dailyWeatherAvg.Humidity = Math.round(humid.reduce((acc, humid) => acc + humid, 0) / humid.length);
@@ -186,8 +184,8 @@ function dailyAverage(fiveDayForecasts) {
 function get5DayForecast() {
     $('#five-day').removeClass('hidden')
     const storedGeoData = JSON.parse(localStorage.getItem("Weather Searches"));
-    const lat = storedGeoData[storedGeoData.length -1].geoLat;
-    const lon = storedGeoData[storedGeoData.length -1].geoLon;
+    const lat = storedGeoData[storedGeoData.length - 1].geoLat;
+    const lon = storedGeoData[storedGeoData.length - 1].geoLon;
     
     const forecast5dayURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${APIKey}`
     
@@ -237,4 +235,3 @@ function display5DayForecast(fiveDayForecasts) {
 
 // search event Listeners
 searchFormEl.on('submit', searchBarInput);
-init();
