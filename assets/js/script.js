@@ -26,22 +26,52 @@ function cToF(degK) {
     return Math.round((degK-273.15) * (9/5) + 32);
 }   
 
+function mpsToMph(metersPerSecond) {
+    return Math.round(metersPerSecond * 2.23694);
+}
+
 // icon url builder
 function buildIconUrl(iconRef) {
     return `https://openweathermap.org/img/wn/${iconRef}@2x.png`
 }
 
-// set weather search parameters
-function setStoredWeather (currentCitySearch) {
-    console.log(currentCitySearch);
+function checkArr(searchHistoryArr, cityName) {
+    return searchHistoryArr.some(city => city.name === cityName);
+}
+
+// function search history management
+function updateSearchHistory() {
+    $("#search-list").empty();
     if(searchHistoryArr) {
         searchHistoryArr.forEach(function(citySearched) {
-            const listItem = $("<li>").text(citySearched.name);
+            const listItem = $("<li>");
+            const button = $("<button>");
+            button.text(citySearched.name)
+            .addClass("dropdown-item")
+            .attr("type", "button");
+            listItem.append(button)
             $("#search-list").append(listItem);
         });
     }    
-    searchHistoryArr.push(currentCitySearch);
-    localStorage.setItem("Weather Searches" , JSON.stringify(searchHistoryArr));
+}
+
+
+// set weather search parameters
+function setStoredWeather (currentCitySearch) {
+    console.log(currentCitySearch.name);
+    let inSearchHistory = checkArr(searchHistoryArr, currentCitySearch.name);
+    console.log(inSearchHistory);
+    if(!inSearchHistory){
+        if(searchHistoryArr.length < 7) {
+            searchHistoryArr.push(currentCitySearch);
+            localStorage.setItem("Weather Searches" , JSON.stringify(searchHistoryArr));
+        } else {
+            searchHistoryArr.pop();
+            searchHistoryArr.shift(currentCitySearch); 
+            localStorage.setItem("Weather Searches" , JSON.stringify(searchHistoryArr));
+        }
+    }
+    updateSearchHistory();
 }
 
 // change background night and day
@@ -55,6 +85,8 @@ function nightOrDayBackground() {
             'font-size': '20px',
             'font-weight' : '600px'
         });
+        $('.card').css('background-color','#6acafd'
+        );
     } else {
         // clear css function
         backgroundBodyEl.css('background-image', 'url(./assets/images/night.jpg)')
@@ -67,10 +99,8 @@ function nightOrDayBackground() {
     }
 };
 
-// search bar input 
-var searchBarInput = function (event) {
-    event.preventDefault();  
-    const cityName = searchInputEl.val().trim();
+// function search
+function search(cityName) {
     if (cityName) {
         getLatLong(cityName)
             .then(function (geoData) {
@@ -87,6 +117,14 @@ var searchBarInput = function (event) {
     } else {
         console.log("Could not find city")
     }
+}
+
+// search bar input 
+var searchBarInput = function (event) {
+    event.preventDefault();  
+    $('#intro-text').addClass('hidden');
+    const cityName = searchInputEl.val().trim();
+    search(cityName);
   };
 
 // display current weather
@@ -150,7 +188,7 @@ function getCurrentWeather(lat, lon) {
                 name: data.name,
                 icon: buildIconUrl(data.weather[0].icon), 
                 "Temp(F)": cToF(data.main.temp),
-                "Wind Speed": data.wind.speed,
+                "Wind Speed(MPH)": data.wind.speed,
                 Humidity: data.main.humidity
             }
             return currentWeatherData;
@@ -164,16 +202,16 @@ function dailyAverage(fiveDayForecasts) {
     for(const date in fiveDayForecasts) {        
         const dailyWeatherAvg = { };
         const temp = fiveDayForecasts[date]["Temp(F)"]
-        const wind = fiveDayForecasts[date]["Wind Speed"]
-        const humid = fiveDayForecasts[date].Humidity
+        const wind = fiveDayForecasts[date]["Wind Speed(MPH)"]
+        const humid = fiveDayForecasts[date]["Humidity(%)"]
         // average temp, wind, humidity arrays and assign to return object
         dailyWeatherAvg.date = fiveDayForecasts[date].date;
         // set icon to daily value if exists
         const iconIndex = fiveDayForecasts[date].icon.length > 5 ? 5 : Math.floor((fiveDayForecasts[date].icon.length / 2) - 1);
         dailyWeatherAvg.icon = fiveDayForecasts[date].icon[iconIndex];
         dailyWeatherAvg["Temp(F)"] = Math.round(temp.reduce((acc, temp) => acc + temp, 0) / temp.length);
-        dailyWeatherAvg["Wind Speed"] = Math.round(wind.reduce((acc, wind) => acc + wind, 0) / wind.length);
-        dailyWeatherAvg.Humidity = Math.round(humid.reduce((acc, humid) => acc + humid, 0) / humid.length);
+        dailyWeatherAvg["Wind Speed(MPH)"] = Math.round(wind.reduce((acc, wind) => acc + wind, 0) / wind.length);
+        dailyWeatherAvg["Humidity(%)"] = Math.round(humid.reduce((acc, humid) => acc + humid, 0) / humid.length);
         // push averaged new weather object 
         dailyWeatherArr.push(dailyWeatherAvg)
     }
@@ -201,16 +239,16 @@ function get5DayForecast() {
                 // get icon for 12 noon for display purposes
                 const hour = dayjs(forecast.dt_txt).format("HH");
                 const temperature = cToF(forecast.main.temp); // Daily temperature in Celsius
-                const wind = forecast.wind.speed; // wind speed
+                const wind = mpsToMph(forecast.wind.speed); // wind speed
                 const humidity = forecast.main.humidity; // humidity
                 // cycle check if date not matching if so create new array if match store value
                 if(!dailyAverages[date]) {
                     dailyAverages[date] = {
-                        date: date,
+                        date: dayjs(date).format('MM/DD/YYYY'),
                         icon: [],
                         "Temp(F)": [],
-                        "Wind Speed": [],
-                        Humidity: []
+                        "Wind Speed(MPH)": [],
+                        "Humidity(%)": []
                     }
                 };
                 // fill up object arrays
@@ -218,8 +256,8 @@ function get5DayForecast() {
                 const iconImgUrl = buildIconUrl(forecast.weather[0].icon)
                 dailyAverages[date].icon.push(iconImgUrl);
                 dailyAverages[date]["Temp(F)"].push(temperature);
-                dailyAverages[date]["Wind Speed"].push(wind);
-                dailyAverages[date].Humidity.push(humidity);
+                dailyAverages[date]["Wind Speed(MPH)"].push(wind);
+                dailyAverages[date]["Humidity(%)"].push(humidity);
             });
             const averages = dailyAverage(dailyAverages) 
             display5DayForecast(averages);
@@ -235,3 +273,8 @@ function display5DayForecast(fiveDayForecasts) {
 
 // search event Listeners
 searchFormEl.on('submit', searchBarInput);
+
+// search from previous 
+$(".dropdown").on('click', '.dropdown-item', function() {
+    search($(this).text());
+  });
