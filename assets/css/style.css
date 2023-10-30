@@ -1,9 +1,22 @@
+*{
+    font-family: 'Permanent Marker', cursive;
+    letter-spacing: 0.1em;
+}
 .body {
     height: 100vh;
     object-fit: fill;
 }
+
 .hidden {
     display: none;
+}
+
+#navbar-brand {
+ height: 50px;   
+}
+
+#intro {
+    background-color: none;
 }
 
 #current-icon {
@@ -16,8 +29,9 @@
     width: 500px;
 }
 
-.card-body {
+.card {
     height: 250px;
+    box-shadow: 10px 10px 20px rgba(0,0,0,0.5);
 }
 
 .dropdown-item:hover {
