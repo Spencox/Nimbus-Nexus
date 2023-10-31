@@ -4,14 +4,13 @@ const APIKey = "553d60d891527f3f60c3b1e4bb0f053b"
 // DOM selectors
 const searchFormEl = $('#search-city');
 const searchInputEl = $('#search-input');
-// current weather DOM selectors
 const currentWeatherChildren = $('#current-weather [id]');
 const backgroundBodyEl = $('body');
 
 // load day or night background image
 window.onload = nightOrDayBackground;
 
-// array of elements
+// array of elements for setting weather
 const currentWeatherElArr = [];
 const searchHistoryArr = [];
 
@@ -26,6 +25,7 @@ function cToF(degK) {
     return Math.round((degK-273.15) * (9/5) + 32);
 }   
 
+// convert wind speed from meters per second to miles per hour
 function mpsToMph(metersPerSecond) {
     return Math.round(metersPerSecond * 2.23694);
 }
@@ -35,11 +35,23 @@ function buildIconUrl(iconRef) {
     return `https://openweathermap.org/img/wn/${iconRef}@2x.png`
 }
 
+// check to make sure that current search has not been searched before
 function checkArr(searchHistoryArr, cityName) {
     return searchHistoryArr.some(city => city.name === cityName);
 }
 
-// function search history management
+// populates pervious searches drop down if in localstorage
+function init() {
+    const previousSearches = JSON.parse(localStorage.getItem("Weather Searches"));
+    if(previousSearches){
+        previousSearches.forEach(search => {
+            searchHistoryArr.push(search);
+        })
+    updateSearchHistory();
+    }
+}
+
+// adds up to 7 cities in the previous searches
 function updateSearchHistory() {
     $("#search-list").empty();
     if(searchHistoryArr) {
@@ -55,12 +67,9 @@ function updateSearchHistory() {
     }    
 }
 
-
-// set weather search parameters
+// set weather search in local storage to be used when logging back in
 function setStoredWeather (currentCitySearch) {
-    console.log(currentCitySearch.name);
     let inSearchHistory = checkArr(searchHistoryArr, currentCitySearch.name);
-    console.log(inSearchHistory);
     if(!inSearchHistory){
         if(searchHistoryArr.length < 7) {
             searchHistoryArr.push(currentCitySearch);
@@ -99,8 +108,9 @@ function nightOrDayBackground() {
     }
 };
 
-// function search
+// performs the calls to the API's and waits for responses before next call
 function search(cityName) {
+    $('#intro-text').addClass('hidden');
     if (cityName) {
         getLatLong(cityName)
             .then(function (geoData) {
@@ -122,7 +132,6 @@ function search(cityName) {
 // search bar input 
 var searchBarInput = function (event) {
     event.preventDefault();  
-    $('#intro-text').addClass('hidden');
     const cityName = searchInputEl.val().trim();
     search(cityName);
   };
@@ -152,7 +161,7 @@ function displayWeather(currentWeather, elements) {
     });
 }
 
-// get city lat longs
+// get city lat longs API Call
 function getLatLong(city) {
     const limit = 3;
     const geocodingUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=${limit}&appid=${APIKey}`;
@@ -174,7 +183,7 @@ function getLatLong(city) {
         })
 }
 
-// get current weather after city lat longs
+// get current weather after city lat longs API call
 function getCurrentWeather(lat, lon) {
     const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${APIKey}`;
     // return a promise
@@ -195,8 +204,7 @@ function getCurrentWeather(lat, lon) {
         })
 }
 
-
-// helper function to set up 5 day forecasts
+// take the 3 hour data and average for the day
 function dailyAverage(fiveDayForecasts) {
     const dailyWeatherArr = [];
     for(const date in fiveDayForecasts) {        
@@ -207,7 +215,7 @@ function dailyAverage(fiveDayForecasts) {
         // average temp, wind, humidity arrays and assign to return object
         dailyWeatherAvg.date = fiveDayForecasts[date].date;
         // set icon to daily value if exists
-        const iconIndex = fiveDayForecasts[date].icon.length > 5 ? 5 : Math.floor((fiveDayForecasts[date].icon.length / 2) - 1);
+        const iconIndex = fiveDayForecasts[date].icon.length > 5 ? 5 : Math.floor((fiveDayForecasts[date].icon.length / 2));
         dailyWeatherAvg.icon = fiveDayForecasts[date].icon[iconIndex];
         dailyWeatherAvg["Temp(F)"] = Math.round(temp.reduce((acc, temp) => acc + temp, 0) / temp.length);
         dailyWeatherAvg["Wind Speed(MPH)"] = Math.round(wind.reduce((acc, wind) => acc + wind, 0) / wind.length);
@@ -218,7 +226,7 @@ function dailyAverage(fiveDayForecasts) {
     return dailyWeatherArr
 }
 
-// 5 day forecast
+// 5 day forecast API call
 function get5DayForecast() {
     $('#five-day').removeClass('hidden')
     const storedGeoData = JSON.parse(localStorage.getItem("Weather Searches"));
@@ -252,7 +260,6 @@ function get5DayForecast() {
                     }
                 };
                 // fill up object arrays
-
                 const iconImgUrl = buildIconUrl(forecast.weather[0].icon)
                 dailyAverages[date].icon.push(iconImgUrl);
                 dailyAverages[date]["Temp(F)"].push(temperature);
@@ -264,6 +271,7 @@ function get5DayForecast() {
         })
 }
 
+// send the cards to be assigned
 function display5DayForecast(fiveDayForecasts) {
     fiveDayForecasts.forEach((forecastCard, index) => {
         const cardId = "#day-" + index + " [id]";
@@ -278,3 +286,6 @@ searchFormEl.on('submit', searchBarInput);
 $(".dropdown").on('click', '.dropdown-item', function() {
     search($(this).text());
   });
+
+// initialize previous stored searches
+init();
