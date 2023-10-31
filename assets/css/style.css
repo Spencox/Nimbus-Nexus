@@ -1,12 +1,15 @@
+/* google fonts*/
 *{
     font-family: 'Permanent Marker', cursive;
     letter-spacing: 0.1em;
 }
+
 .body {
     height: 100vh;
     object-fit: fill;
 }
 
+/* to handle hidden components */
 .hidden {
     display: none;
 }
@@ -19,6 +22,7 @@
     background-color: none;
 }
 
+/* icon sizing */
 #current-icon {
     height: 75px;
     width: 75px;
